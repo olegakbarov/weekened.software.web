@@ -7,7 +7,12 @@ export default function HomePage() {
         <span className="tagline">Software that feels like the weekend.</span>
 
         <div className="cta-row">
-          <span className="download download-disabled">
+          <a
+            href="https://github.com/olegakbarov/weekend.software/archive/refs/tags/v0.1.0.zip"
+            className="download"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -21,8 +26,8 @@ export default function HomePage() {
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            Coming soon
-          </span>
+            Download v0.1.0
+          </a>
           <a
             href="https://github.com/olegakbarov/weekend.software"
             className="github-link"
