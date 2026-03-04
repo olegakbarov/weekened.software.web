@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+*.tsbuildinfo
+.mcp.json
+weekend.config.json
+shared-assets/
+page-preview*.png
+updated-page.png
+logo.png

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekend Software</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  :root{
+    --bg:#ffffff;
+    --text:#1a1a2e;
+    --sub:#6b7094;
+    --accent:#4f8fff;
+    --glow:rgba(79,143,255,.15);
+  }
+
+  html,body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);background:#fff}
+
+  body{
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+  }
+
+  .app-outline{
+    position:fixed;
+    left:50%;
+    top:50%;
+    width:min(96vw,1040px);
+    transform:translate(-50%,-56%);
+    z-index:0;
+    pointer-events:none;
+    opacity:.96;
+    filter:drop-shadow(0 18px 44px rgba(40,88,148,.08));
+  }
+  .app-outline svg{
+    width:100%;
+    height:auto;
+    display:block;
+  }
+  .outline-bg{fill:#ffffff;stroke:#c7d4e5;stroke-width:3}
+  .stroke-main{stroke:#adbed4;stroke-width:3.2;fill:none}
+  .stroke-soft{stroke:#c3d1e2;stroke-width:2.6;fill:none}
+  .fill-soft{fill:#f4f8fd;stroke:#c8d6e6;stroke-width:2.4}
+  .fill-bar{fill:#edf3fb;stroke:#c3d2e4;stroke-width:2.4}
+
+  .container{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:32px;
+    position:relative;
+    z-index:1;
+    padding:24px;
+  }
+
+  .logo{
+    width:180px;
+    height:180px;
+    border-radius:40px;
+    object-fit:contain;
+    filter:drop-shadow(0 8px 32px rgba(79,143,255,.18));
+  }
+
+  .wordmark{
+    font-size:28px;
+    font-weight:600;
+    letter-spacing:-.02em;
+    background:linear-gradient(135deg,#1a1a2e 0%,#4f6fa0 100%);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+
+  .tagline{
+    font-size:15px;
+    font-weight:400;
+    color:var(--sub);
+    letter-spacing:.01em;
+    margin-top:-16px;
+  }
+
+  .download{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:14px 32px;
+    border-radius:14px;
+    border:none;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:500;
+    color:#fff;
+    background:linear-gradient(135deg,#4f8fff 0%,#6da8ff 50%,#88baff 100%);
+    box-shadow:
+      0 2px 8px rgba(79,143,255,.25),
+      0 0 0 1px rgba(79,143,255,.1),
+      inset 0 1px 0 rgba(255,255,255,.2);
+    text-decoration:none;
+    position:relative;
+    overflow:hidden;
+    letter-spacing:.01em;
+  }
+  .download::before{
+    content:'';
+    position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 50%);
+    pointer-events:none;
+  }
+  .download svg{
+    width:18px;height:18px;
+    flex-shrink:0;
+  }
+
+  .platform{
+    font-size:12px;
+    color:var(--sub);
+    opacity:.7;
+    font-weight:400;
+    letter-spacing:.02em;
+  }
+
+  footer{
+    position:fixed;
+    bottom:24px;
+    font-size:12px;
+    color:var(--sub);
+    opacity:.5;
+    letter-spacing:.02em;
+  }
+</style>
+</head>
+<body>
+<div class="app-outline" aria-hidden="true">
+  <svg viewBox="0 0 1200 760" role="presentation">
+    <rect class="outline-bg" x="52" y="22" width="1096" height="716" rx="40"/>
+    <rect class="stroke-main" x="70" y="40" width="1060" height="680" rx="34"/>
+    <rect class="fill-bar" x="70" y="40" width="1060" height="76" rx="34"/>
+    <line class="stroke-soft" x1="70" y1="116" x2="1130" y2="116"/>
+    <circle class="stroke-soft" cx="120" cy="78" r="10"/>
+    <circle class="stroke-soft" cx="156" cy="78" r="10"/>
+    <circle class="stroke-soft" cx="192" cy="78" r="10"/>
+    <line class="stroke-soft" x1="334" y1="116" x2="334" y2="720"/>
+    <rect class="fill-soft" x="110" y="152" width="182" height="48" rx="14"/>
+    <rect class="fill-soft" x="110" y="220" width="182" height="48" rx="14"/>
+    <rect class="fill-soft" x="110" y="288" width="182" height="48" rx="14"/>
+    <rect class="fill-soft" x="370" y="152" width="716" height="180" rx="20"/>
+    <rect class="fill-soft" x="370" y="360" width="348" height="324" rx="20"/>
+    <rect class="fill-soft" x="738" y="360" width="348" height="154" rx="20"/>
+    <rect class="fill-soft" x="738" y="530" width="348" height="154" rx="20"/>
+  </svg>
+</div>
+
+<div class="container">
+  <img src="logo.png" alt="Weekend Software" class="logo" />
+  <span class="wordmark">Weekend Software</span>
+  <span class="tagline">Software that feels like the weekend.</span>
+
+  <a href="#" class="download">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Download for Mac
+  </a>
+  <span class="platform">macOS 13+ &middot; Apple Silicon &amp; Intel</span>
+</div>
+
+<footer>&copy; 2025 Weekend Software</footer>
+
+</body>
+</html>
