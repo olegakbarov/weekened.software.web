@@ -171,6 +171,114 @@ body {
   pointer-events: none;
 }
 
+/* Split download button */
+.download-split {
+  display: inline-flex;
+  position: relative;
+  border-radius: 14px;
+  overflow: visible;
+}
+
+.download-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px 14px 32px;
+  border-radius: 14px 0 0 14px;
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(135deg, #4f8fff 0%, #6da8ff 50%, #88baff 100%);
+  box-shadow: 0 2px 8px rgba(79, 143, 255, 0.25), 0 0 0 1px rgba(79, 143, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+
+.download-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.download-main svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.download-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0 14px 14px 0;
+  color: #fff;
+  background: linear-gradient(135deg, #4f8fff 0%, #6da8ff 50%, #88baff 100%);
+  box-shadow: 0 2px 8px rgba(79, 143, 255, 0.25), 0 0 0 1px rgba(79, 143, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.download-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.download-toggle:hover {
+  background: linear-gradient(135deg, #3d7fee 0%, #5b96f0 50%, #78abf5 100%);
+}
+
+.download-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  border-radius: 10px;
+  padding: 4px;
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.download-option {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: background 0.1s;
+}
+
+.download-option:hover {
+  background: var(--btn-hover-bg);
+}
+
+.download-option.active {
+  font-weight: 500;
+  color: #4f8fff;
+}
+
 .platform {
   font-size: 12px;
   color: var(--sub);
