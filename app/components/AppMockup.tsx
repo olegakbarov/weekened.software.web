@@ -3,60 +3,114 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 type Tab = "browser" | "agent" | "editor";
+type View = "project" | "newProject";
 
-const projects = [
+type Project = {
+  name: string;
+  status: "running" | "idle";
+  terminals: { label: string; active?: boolean }[];
+};
+
+const INITIAL_PROJECTS: Project[] = [
   {
-    name: "my-app",
-    status: "running" as const,
+    name: "landing-page",
+    status: "idle",
+    terminals: [],
+  },
+  { name: "api-server", status: "idle", terminals: [] },
+];
+
+const FULL_PROJECTS: Project[] = [
+  {
+    name: "synth",
+    status: "running",
     terminals: [{ label: "dev server", active: true }, { label: "claude" }],
   },
-  { name: "landing-page", status: "idle" as const, terminals: [] },
-  { name: "api-server", status: "idle" as const, terminals: [] },
+  {
+    name: "landing-page",
+    status: "idle",
+    terminals: [],
+  },
+  { name: "api-server", status: "idle", terminals: [] },
 ];
 
 const AGENT_LINES = [
-  { prefix: "$", text: 'claude "add user auth to the app"', style: "cmd" },
+  { prefix: "$", text: 'claude "build a web audio synthesizer"', style: "cmd" },
   { prefix: "", text: "", style: "dim" },
   { prefix: "", text: "Reading project structure...", style: "dim" },
-  { prefix: "", text: "Found 12 files in src/", style: "dim" },
+  { prefix: "", text: "Found 4 files in src/", style: "dim" },
   { prefix: "", text: "", style: "dim" },
-  { prefix: "+", text: "Creating src/middleware/auth.ts", style: "green" },
-  { prefix: "~", text: "Updating src/routes/index.ts", style: "yellow" },
-  { prefix: "~", text: "Updating src/app.ts", style: "yellow" },
-  { prefix: "+", text: "Adding jsonwebtoken dependency", style: "green" },
+  { prefix: "+", text: "Creating src/synth/oscillator.ts", style: "green" },
+  { prefix: "+", text: "Creating src/synth/filter.ts", style: "green" },
+  { prefix: "+", text: "Creating src/components/keyboard.tsx", style: "green" },
+  { prefix: "~", text: "Updating src/app.tsx", style: "yellow" },
+  { prefix: "+", text: "Adding tone.js dependency", style: "green" },
   { prefix: "", text: "", style: "dim" },
-  { prefix: "✓", text: "Done. 3 files changed, 1 added.", style: "done" },
+  { prefix: "✓", text: "Done. 4 files created, 1 updated.", style: "done" },
 ];
 
 function BrowserPane() {
   return (
     <div className="m-pane">
-      <div className="m-browser-page">
-        <div className="m-page-nav">
-          <span className="m-page-logo">&#9679; my-app</span>
-          <span className="m-page-links">
-            <span>home</span>
-            <span>about</span>
-            <span>api</span>
-          </span>
+      <div className="m-browser-page te-synth">
+        {/* OP-1 style screen */}
+        <div className="te-screen">
+          <svg viewBox="0 0 280 100" className="te-screen-svg">
+            {/* Waveform - sawtooth */}
+            <g opacity="0.9">
+              {Array.from({ length: 14 }).map((_, i) => {
+                const x = 20 + i * 18;
+                return (
+                  <line key={i} x1={x} y1={70} x2={x + 18} y2={26} stroke="currentColor" strokeWidth="1.2" />
+                );
+              })}
+              {Array.from({ length: 13 }).map((_, i) => {
+                const x = 38 + i * 18;
+                return (
+                  <line key={`d${i}`} x1={x} y1={26} x2={x} y2={70} stroke="currentColor" strokeWidth="1.2" />
+                );
+              })}
+            </g>
+            {/* Labels */}
+            <text x="16" y="16" fontSize="8" fill="currentColor" opacity="0.5" fontFamily="inherit">synth</text>
+            <text x="240" y="16" fontSize="8" fill="currentColor" opacity="0.5" fontFamily="inherit" textAnchor="end">A4 440</text>
+            <text x="16" y="92" fontSize="7" fill="currentColor" opacity="0.35" fontFamily="inherit">saw</text>
+            {/* ADSR mini */}
+            <polyline points="100,92 104,80 110,85 128,85 140,92" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.35" />
+            <text x="240" y="92" fontSize="7" fill="currentColor" opacity="0.35" fontFamily="inherit" textAnchor="end">-3.2db</text>
+          </svg>
         </div>
-        <div className="m-page-hero">
-          <div className="m-page-h1">Welcome to my-app</div>
-          <div className="m-page-p">Built with Weekend Software</div>
-          <div className="m-page-btn">get started</div>
+
+        {/* Four colored encoders */}
+        <div className="te-encoders">
+          {[
+            { color: "#e95420", label: "1", angle: 135 },
+            { color: "#47a0e0", label: "2", angle: -45 },
+            { color: "#e8e4df", label: "3", angle: 30 },
+            { color: "#5eb86c", label: "4", angle: 90 },
+          ].map((enc) => (
+            <div key={enc.label} className="te-enc">
+              <div className="te-enc-ring" style={{ borderColor: enc.color }}>
+                <div className="te-enc-dot" style={{ transform: `rotate(${enc.angle}deg)`, background: enc.color }} />
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="m-page-cards">
-          <div className="m-page-card">
-            <div className="m-card-icon">&#9632;</div>
-            <div className="m-card-label">fast</div>
+
+        {/* Bottom section: mode buttons + sequencer pads */}
+        <div className="te-bottom">
+          <div className="te-modes">
+            {["synth", "drum", "tape", "mix"].map((m, i) => (
+              <div key={m} className={`te-mode${i === 0 ? " active" : ""}`}>{m}</div>
+            ))}
           </div>
-          <div className="m-page-card">
-            <div className="m-card-icon">&#9650;</div>
-            <div className="m-card-label">secure</div>
-          </div>
-          <div className="m-page-card">
-            <div className="m-card-icon">&#9679;</div>
-            <div className="m-card-label">simple</div>
+          <div className="te-seq">
+            {Array.from({ length: 16 }).map((_, i) => (
+              <div
+                key={i}
+                className={`te-seq-step${i === 2 || i === 6 || i === 10 || i === 14 ? " on" : ""}${i === 2 ? " now" : ""}`}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -141,89 +195,171 @@ function EditorPane() {
     <div className="m-pane m-editor-layout">
       <div className="m-editor-main">
         <div className="m-editor-tab-bar">
-          <span className="m-editor-file active">app.ts</span>
-          <span className="m-editor-file">auth.ts</span>
+          <span className="m-editor-file active">oscillator.ts</span>
+          <span className="m-editor-file">filter.ts</span>
         </div>
         <div className="m-editor-code">
           <div className="m-code-line">
             <span className="m-ln">1</span>
             <span className="m-kw">import</span>
-            {" { serve } "}
+            {" { ctx } "}
             <span className="m-kw">from</span>
-            <span className="m-str"> &quot;./server&quot;</span>;
+            <span className="m-str"> &quot;./audio&quot;</span>;
           </div>
           <div className="m-code-line">
             <span className="m-ln">2</span>
-            <span className="m-kw">import</span>
-            {" { router } "}
-            <span className="m-kw">from</span>
-            <span className="m-str"> &quot;./routes&quot;</span>;
           </div>
           <div className="m-code-line">
             <span className="m-ln">3</span>
-            <span className="m-kw">import</span>
-            {" { auth } "}
-            <span className="m-kw">from</span>
-            <span className="m-str"> &quot;./middleware&quot;</span>;
+            <span className="m-kw">export function</span>
+            {" "}
+            <span className="m-fn">createOsc</span>
+            {"(type: OscillatorType) {"}
           </div>
           <div className="m-code-line">
             <span className="m-ln">4</span>
+            {"  "}
+            <span className="m-kw">const</span>
+            {" osc = ctx."}
+            <span className="m-fn">createOscillator</span>
+            {"();"}
           </div>
           <div className="m-code-line">
             <span className="m-ln">5</span>
-            <span className="m-kw">const</span>
-            {" app = "}
-            <span className="m-fn">serve</span>
-            {"({"}
+            {"  osc.type = type;"}
           </div>
           <div className="m-code-line">
             <span className="m-ln">6</span>
-            {"  port: "}
-            <span className="m-num">3000</span>,
           </div>
           <div className="m-code-line">
             <span className="m-ln">7</span>
-            {"  middleware: ["}
-            <span className="m-fn">auth</span>
-            {"()],"}
+            {"  "}
+            <span className="m-kw">const</span>
+            {" gain = ctx."}
+            <span className="m-fn">createGain</span>
+            {"();"}
           </div>
           <div className="m-code-line">
             <span className="m-ln">8</span>
-            {"  routes: router,"}
+            {"  gain.gain.value = "}
+            <span className="m-num">0</span>
+            {";"}
           </div>
           <div className="m-code-line">
             <span className="m-ln">9</span>
-            {"});"}
+            {"  osc."}
+            <span className="m-fn">connect</span>
+            {"(gain)."}
+            <span className="m-fn">connect</span>
+            {"(ctx.destination);"}
           </div>
           <div className="m-code-line">
             <span className="m-ln">10</span>
+            {"  osc."}
+            <span className="m-fn">start</span>
+            {"();"}
           </div>
           <div className="m-code-line">
             <span className="m-ln">11</span>
-            {"console."}
-            <span className="m-fn">log</span>(
-            <span className="m-str">&quot;listening :3000&quot;</span>);
+          </div>
+          <div className="m-code-line">
+            <span className="m-ln">12</span>
+            {"  "}
+            <span className="m-kw">return</span>
+            {" { osc, gain };"}
+          </div>
+          <div className="m-code-line">
+            <span className="m-ln">13</span>
+            {"}"}
           </div>
         </div>
       </div>
       <div className="m-file-tree">
         <div className="m-tree-header">files</div>
         <div className="m-tree-item m-tree-dir">&#9660; src/</div>
-        <div className="m-tree-item m-tree-file m-tree-active">
-          &nbsp; app.ts
-        </div>
         <div className="m-tree-item m-tree-file">
-          &nbsp; server.ts
+          &nbsp; app.tsx
         </div>
-        <div className="m-tree-item m-tree-file">
-          &nbsp; routes.ts
+        <div className="m-tree-item m-tree-dir">&#9660; synth/</div>
+        <div className="m-tree-item m-tree-file m-tree-active m-tree-new">
+          &nbsp;&nbsp; oscillator.ts
         </div>
-        <div className="m-tree-item m-tree-dir">&#9660; middleware/</div>
         <div className="m-tree-item m-tree-file m-tree-new">
-          &nbsp;&nbsp; auth.ts
+          &nbsp;&nbsp; filter.ts
         </div>
-        <div className="m-tree-item m-tree-dir">&#9654; public/</div>
+        <div className="m-tree-item m-tree-file m-tree-new">
+          &nbsp;&nbsp; audio.ts
+        </div>
+        <div className="m-tree-item m-tree-dir">&#9660; components/</div>
+        <div className="m-tree-item m-tree-file m-tree-new">
+          &nbsp;&nbsp; keyboard.tsx
+        </div>
         <div className="m-tree-item m-tree-file">&nbsp; package.json</div>
+      </div>
+    </div>
+  );
+}
+
+function NewProjectPane({
+  nameTyped,
+  agentTyped,
+  isCreating,
+  nameFieldRef,
+  agentFieldRef,
+  createBtnRef,
+}: {
+  nameTyped: string;
+  agentTyped: string;
+  isCreating: boolean;
+  nameFieldRef: React.Ref<HTMLDivElement>;
+  agentFieldRef: React.Ref<HTMLDivElement>;
+  createBtnRef: React.Ref<HTMLButtonElement>;
+}) {
+  return (
+    <div className="m-pane m-newproject-pane">
+      <div className="m-np-form">
+        <div className="m-np-field" ref={nameFieldRef}>
+          <span className="m-np-label">PROJECT NAME</span>
+          <div className="m-np-input">
+            {nameTyped}
+            {agentTyped === "" && !isCreating && nameTyped.length > 0 && (
+              <span className="m-cursor">|</span>
+            )}
+            {nameTyped === "" && agentTyped === "" && !isCreating && (
+              <span className="m-np-placeholder">my-app</span>
+            )}
+          </div>
+        </div>
+        <div className="m-np-divider" />
+        <div className="m-np-field" ref={agentFieldRef}>
+          <span className="m-np-label">AGENT COMMAND</span>
+          <div className="m-np-input">
+            {agentTyped}
+            {agentTyped.length > 0 && !isCreating && (
+              <span className="m-cursor">|</span>
+            )}
+            {agentTyped === "" && !isCreating && (
+              <span className="m-np-placeholder">claude</span>
+            )}
+          </div>
+        </div>
+        <div className="m-np-divider" />
+        <div className="m-np-field">
+          <div className="m-np-label-row">
+            <span className="m-np-label">GITHUB REPO</span>
+            <span className="m-np-optional">optional</span>
+          </div>
+          <div className="m-np-input">
+            <span className="m-np-placeholder">https://github.com/owner/repo</span>
+          </div>
+        </div>
+        <div className="m-np-divider" />
+        <button
+          ref={createBtnRef}
+          className={`m-np-submit${isCreating ? " creating" : ""}`}
+        >
+          {isCreating ? "CREATING..." : "CREATE"}
+        </button>
       </div>
     </div>
   );
@@ -277,6 +413,8 @@ function jitter(v: number, range: number = 3): number {
 
 export default function AppMockup() {
   const [activeTab, setActiveTab] = useState<Tab>("browser");
+  const [view, setView] = useState<View>("project");
+  const [projects, setProjects] = useState(INITIAL_PROJECTS);
   const [selectedProject, setSelectedProject] = useState(0);
 
   // Cursor state
@@ -288,12 +426,20 @@ export default function AppMockup() {
   const [typedLines, setTypedLines] = useState(AGENT_LINES.length);
   const [currentLineTyped, setCurrentLineTyped] = useState("");
 
+  // New project form state
+  const [npName, setNpName] = useState("");
+  const [npAgent, setNpAgent] = useState("");
+  const [npCreating, setNpCreating] = useState(false);
+
   // Refs for target elements
   const mockupRef = useRef<HTMLDivElement>(null);
   const newProjectBtnRef = useRef<HTMLButtonElement>(null);
   const agentTabRef = useRef<HTMLButtonElement>(null);
   const editorTabRef = useRef<HTMLButtonElement>(null);
   const browserTabRef = useRef<HTMLButtonElement>(null);
+  const npNameRef = useRef<HTMLDivElement>(null);
+  const npAgentRef = useRef<HTMLDivElement>(null);
+  const npCreateBtnRef = useRef<HTMLButtonElement>(null);
 
   // Move cursor with transition
   const moveTo = useCallback(
@@ -321,7 +467,24 @@ export default function AppMockup() {
     []
   );
 
-  // Type text character by character into the agent pane
+  // Type into a state setter character by character
+  const typeText = useCallback(
+    async (
+      text: string,
+      setter: (v: string) => void,
+      signal: { cancelled: boolean },
+      charDelay: number = 55
+    ) => {
+      for (let i = 0; i <= text.length; i++) {
+        if (signal.cancelled) return;
+        setter(text.slice(0, i));
+        await sleep(charDelay + (Math.random() - 0.5) * 24, signal);
+      }
+    },
+    []
+  );
+
+  // Reveal agent lines one at a time
   const typeAgentLines = useCallback(
     async (signal: { cancelled: boolean }) => {
       setTypedLines(0);
@@ -329,23 +492,10 @@ export default function AppMockup() {
 
       for (let lineIdx = 0; lineIdx < AGENT_LINES.length; lineIdx++) {
         if (signal.cancelled) return;
-        const line = AGENT_LINES[lineIdx];
-        const fullText = line.text;
-
-        // Type each character
-        for (let ci = 0; ci <= fullText.length; ci++) {
-          if (signal.cancelled) return;
-          setCurrentLineTyped(fullText.slice(0, ci));
-          const charDelay = 38 + (Math.random() - 0.5) * 20;
-          await sleep(charDelay, signal);
-        }
-
-        // Commit line
+        setCurrentLineTyped(AGENT_LINES[lineIdx].text);
         setTypedLines(lineIdx + 1);
         setCurrentLineTyped("");
-
-        // Small pause between lines
-        await sleep(80 + Math.random() * 60, signal);
+        await sleep(120 + Math.random() * 80, signal);
       }
     },
     []
@@ -355,75 +505,109 @@ export default function AppMockup() {
     const signal = { cancelled: false };
 
     async function runLoop() {
-      // Wait for mount
       await sleep(500, signal);
 
       while (!signal.cancelled) {
-        // Reset state for loop start
+        // Reset all state for loop start
+        setView("project");
         setActiveTab("browser");
+        setProjects(INITIAL_PROJECTS);
+        setSelectedProject(0);
         setTypedLines(AGENT_LINES.length);
         setCurrentLineTyped("");
+        setNpName("");
+        setNpAgent("");
+        setNpCreating(false);
         setCursorVisible(true);
 
         // Step 1: Initial pause
         await sleep(800, signal);
         if (signal.cancelled) break;
 
-        // Step 2: Move to "+ new project" button and click
+        // Step 2: Move to "+ new project" button and click → show form
         if (newProjectBtnRef.current && mockupRef.current) {
           await moveTo(newProjectBtnRef.current, signal, 700);
           if (signal.cancelled) break;
           await doClick(signal);
+          setView("newProject");
+          await sleep(400, signal);
           if (signal.cancelled) break;
         }
 
-        // Step 3: Move to agent tab and click
-        if (agentTabRef.current && mockupRef.current) {
-          await moveTo(agentTabRef.current, signal, 600);
+        // Step 3: Move to project name field and type
+        if (npNameRef.current && mockupRef.current) {
+          await moveTo(npNameRef.current, signal, 500);
           if (signal.cancelled) break;
           await doClick(signal);
-          setActiveTab("agent");
+          if (signal.cancelled) break;
+          await typeText("synth", setNpName, signal);
+          if (signal.cancelled) break;
           await sleep(300, signal);
+        }
+
+        // Step 4: Move to agent command field and type
+        if (npAgentRef.current && mockupRef.current) {
+          await moveTo(npAgentRef.current, signal, 400);
+          if (signal.cancelled) break;
+          await doClick(signal);
+          if (signal.cancelled) break;
+          await typeText("claude", setNpAgent, signal);
+          if (signal.cancelled) break;
+          await sleep(300, signal);
+        }
+
+        // Step 5: Move to CREATE button and click
+        if (npCreateBtnRef.current && mockupRef.current) {
+          await moveTo(npCreateBtnRef.current, signal, 500);
+          if (signal.cancelled) break;
+          await doClick(signal);
+          setNpCreating(true);
+          await sleep(800, signal);
+          if (signal.cancelled) break;
+
+          // Project created — land directly on agent tab
+          setProjects(FULL_PROJECTS);
+          setSelectedProject(0);
+          setView("project");
+          setActiveTab("agent");
+          await sleep(400, signal);
           if (signal.cancelled) break;
         }
 
-        // Step 4: Move into terminal area and type
+        // Step 6: Agent types (already on agent tab from creation)
         if (mockupRef.current) {
-          // Move cursor into the terminal area (roughly center of pane)
           const container = mockupRef.current;
           setCursorPos({
             x: jitter(container.offsetWidth * 0.55),
             y: jitter(container.offsetHeight * 0.55),
           });
-          await sleep(500, signal);
+          await sleep(400, signal);
           if (signal.cancelled) break;
 
           await typeAgentLines(signal);
           if (signal.cancelled) break;
-          await sleep(400, signal);
+          await sleep(600, signal);
         }
 
-        // Step 5: Move to editor tab and click
-        if (editorTabRef.current && mockupRef.current) {
-          await moveTo(editorTabRef.current, signal, 600);
-          if (signal.cancelled) break;
-          await doClick(signal);
-          setActiveTab("editor");
-          await sleep(1200, signal);
-          if (signal.cancelled) break;
-        }
-
-        // Step 6: Move to browser tab and click
+        // Step 7: Move to browser tab — see the result
         if (browserTabRef.current && mockupRef.current) {
           await moveTo(browserTabRef.current, signal, 600);
           if (signal.cancelled) break;
           await doClick(signal);
           setActiveTab("browser");
-          await sleep(1800, signal);
+          await sleep(2000, signal);
           if (signal.cancelled) break;
         }
 
-        // Loop back
+        // Step 8: Move to editor tab and click
+        if (editorTabRef.current && mockupRef.current) {
+          await moveTo(editorTabRef.current, signal, 600);
+          if (signal.cancelled) break;
+          await doClick(signal);
+          setActiveTab("editor");
+          await sleep(1400, signal);
+          if (signal.cancelled) break;
+        }
       }
     }
 
@@ -431,11 +615,12 @@ export default function AppMockup() {
     return () => {
       signal.cancelled = true;
     };
-  }, [moveTo, doClick, typeAgentLines]);
+  }, [moveTo, doClick, typeText, typeAgentLines]);
+
+  const showTabs = view === "project";
 
   return (
     <div className="mockup-window" ref={mockupRef}>
-      {/* Animated cursor */}
       {cursorVisible && (
         <div
           className={`m-animated-cursor${clicking ? " clicking" : ""}`}
@@ -495,59 +680,73 @@ export default function AppMockup() {
 
         {/* Main area */}
         <div className="mockup-main">
-          <div className="mockup-tabs">
-            {(["browser", "agent", "editor"] as Tab[]).map((tab) => (
-              <button
-                key={tab}
-                ref={
-                  tab === "agent"
-                    ? agentTabRef
-                    : tab === "editor"
-                      ? editorTabRef
-                      : tab === "browser"
-                        ? browserTabRef
-                        : undefined
-                }
-                className={`mockup-tab${activeTab === tab ? " active" : ""}`}
-                onClick={() => setActiveTab(tab)}
-              >
-                <span className="m-tab-icon">
-                  {tab === "browser" && "○"}
-                  {tab === "agent" && ">_"}
-                  {tab === "editor" && "</>"}
-                </span>
-                {tab}
-              </button>
-            ))}
-            {activeTab === "browser" && (
-              <div className="m-urlbar-inline">
-                <div className="m-urlbar-input">
-                  <span>localhost:3000</span>
-                  <span className="m-urlbar-arrows">
-                    <span className="m-arrow">&#8592;</span>
-                    <span className="m-arrow">&#8594;</span>
-                    <span className="m-arrow">&#8635;</span>
+          {showTabs && (
+            <div className="mockup-tabs">
+              {(["browser", "agent", "editor"] as Tab[]).map((tab) => (
+                <button
+                  key={tab}
+                  ref={
+                    tab === "agent"
+                      ? agentTabRef
+                      : tab === "editor"
+                        ? editorTabRef
+                        : tab === "browser"
+                          ? browserTabRef
+                          : undefined
+                  }
+                  className={`mockup-tab${activeTab === tab ? " active" : ""}`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  <span className="m-tab-icon">
+                    {tab === "browser" && "○"}
+                    {tab === "agent" && ">_"}
+                    {tab === "editor" && "</>"}
                   </span>
+                  {tab}
+                </button>
+              ))}
+              {activeTab === "browser" && (
+                <div className="m-urlbar-inline">
+                  <div className="m-urlbar-input">
+                    <span>localhost:3000</span>
+                    <span className="m-urlbar-arrows">
+                      <span className="m-arrow">&#8592;</span>
+                      <span className="m-arrow">&#8594;</span>
+                      <span className="m-arrow">&#8635;</span>
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
 
-          {activeTab === "browser" && <BrowserPane />}
-          {activeTab === "agent" && (
+          {view === "newProject" && (
+            <NewProjectPane
+              nameTyped={npName}
+              agentTyped={npAgent}
+              isCreating={npCreating}
+              nameFieldRef={npNameRef}
+              agentFieldRef={npAgentRef}
+              createBtnRef={npCreateBtnRef}
+            />
+          )}
+
+          {showTabs && activeTab === "browser" && <BrowserPane />}
+          {showTabs && activeTab === "agent" && (
             <AgentPane
               typedLines={typedLines}
               currentLineTyped={currentLineTyped}
             />
           )}
-          {activeTab === "editor" && <EditorPane />}
+          {showTabs && activeTab === "editor" && <EditorPane />}
 
           <div className="m-statusbar">
-            <span>my-app</span>
+            <span>{view === "newProject" ? "new project" : "synth"}</span>
             <span className="m-status-right">
-              {activeTab === "browser" && "localhost:3000 — 200 OK"}
-              {activeTab === "agent" && "claude — ready"}
-              {activeTab === "editor" && "app.ts — 11 lines — utf-8"}
+              {view === "newProject" && "create a new project"}
+              {showTabs && activeTab === "browser" && "localhost:3000 — 200 OK"}
+              {showTabs && activeTab === "agent" && "claude — ready"}
+              {showTabs && activeTab === "editor" && "oscillator.ts — 13 lines — utf-8"}
             </span>
           </div>
         </div>
