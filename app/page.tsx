@@ -1,14 +1,21 @@
+import AppMockup from "./components/AppMockup";
+
 export default function HomePage() {
+  const arm64DownloadUrl =
+    "https://github.com/olegakbarov/weekend.software/releases/download/untagged-e800cf0ce226df94da4c/Weekend.Software_0.1.0_aarch64.dmg";
+  const x64DownloadUrl =
+    "https://github.com/olegakbarov/weekend.software/releases/download/untagged-e800cf0ce226df94da4c/Weekend.Software_0.1.0_x64.dmg";
+
   return (
     <>
       <main className="container">
         <img src="/logo-face.png" alt="Weekend Software" className="logo" />
         <span className="wordmark">Weekend Software</span>
-        <span className="tagline">Software that feels like the weekend.</span>
+        <span className="tagline">The kind of software you write for fun on Saturday morning or Sunday night.</span>
 
         <div className="cta-row">
           <a
-            href="https://github.com/olegakbarov/weekend.software/archive/refs/tags/v0.1.0.zip"
+            href={arm64DownloadUrl}
             className="download"
             target="_blank"
             rel="noopener noreferrer"
@@ -26,7 +33,28 @@ export default function HomePage() {
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            Download v0.1.0
+            Download for Apple Silicon
+          </a>
+          <a
+            href={x64DownloadUrl}
+            className="github-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Download for Intel
           </a>
           <a
             href="https://github.com/olegakbarov/weekend.software"
@@ -57,7 +85,7 @@ export default function HomePage() {
             <span>Claude Code</span>
           </div>
           <div className="agent-logo" title="Codex">
-            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <svg viewBox="-0.5 -0.5 17 17" fill="currentColor" aria-hidden="true">
               <path d="M14.949 6.547a3.94 3.94 0 0 0-.348-3.273 4.11 4.11 0 0 0-4.4-1.934 4.1 4.1 0 0 0-1.778-.14 4.15 4.15 0 0 0-2.118-.114 4.1 4.1 0 0 0-1.891.948 4.04 4.04 0 0 0-1.158 1.753 4.1 4.1 0 0 0-1.563.679 4 4 0 0 0-1.14 1.253 3.99 3.99 0 0 0 .502 4.731 3.94 3.94 0 0 0 .346 3.274 4.11 4.11 0 0 0 4.402 1.933c.382.425.852.764 1.377.995.526.231 1.095.35 1.67.346 1.78.002 3.358-1.132 3.901-2.804a4.1 4.1 0 0 0 1.563-.68 4 4 0 0 0 1.14-1.253 3.99 3.99 0 0 0-.506-4.716m-6.097 8.406a3.05 3.05 0 0 1-1.945-.694l.096-.054 3.23-1.838a.53.53 0 0 0 .265-.455v-4.49l1.366.778q.02.011.025.035v3.722c-.003 1.653-1.361 2.992-3.037 2.996m-6.53-2.75a2.95 2.95 0 0 1-.36-2.01l.095.057L5.29 12.09a.53.53 0 0 0 .527 0l3.949-2.246v1.555a.05.05 0 0 1-.022.041L6.473 13.3c-1.454.826-3.311.335-4.15-1.098m-.85-6.94A3.02 3.02 0 0 1 3.07 3.949v3.785a.51.51 0 0 0 .262.451l3.93 2.237-1.366.779a.05.05 0 0 1-.048 0L2.585 9.342a2.98 2.98 0 0 1-1.113-4.094zm11.216 2.571L8.747 5.576l1.362-.776a.05.05 0 0 1 .048 0l3.265 1.86a3 3 0 0 1 1.173 1.207 2.96 2.96 0 0 1-.27 3.2 3.05 3.05 0 0 1-1.36.997V8.279a.52.52 0 0 0-.276-.445m1.36-2.015-.097-.057-3.226-1.855a.53.53 0 0 0-.53 0L6.249 6.153V4.598a.04.04 0 0 1 .019-.04L9.533 2.7a3.07 3.07 0 0 1 3.257.139c.474.325.843.778 1.066 1.303.223.526.289 1.103.191 1.664zM5.503 8.575 4.139 7.8a.05.05 0 0 1-.026-.037V4.049c0-.57.166-1.127.476-1.607s.752-.864 1.275-1.105a3.08 3.08 0 0 1 3.234.41l-.096.054-3.23 1.838a.53.53 0 0 0-.265.455zm.742-1.577 1.758-1 1.762 1v2l-1.755 1-1.762-1z"/>
             </svg>
             <span>Codex</span>
@@ -85,70 +113,10 @@ export default function HomePage() {
           You bring the agent. We bring the workspace.
         </p>
 
-        <div className="bento">
-          <div className="bento-card bento-wide">
-            <pre className="card-ascii" aria-hidden="true">{`  ┌──┐  ┌──┐
-  │A1│◄►│A2│
-  └──┘  └──┘`}</pre>
-            <h3>Bring your own agent</h3>
-            <p>
-              Claude, Codex, Amp, Cursor, Aider — if it speaks MCP, it works here.
-            </p>
-          </div>
-
-          <div className="bento-card">
-            <pre className="card-ascii" aria-hidden="true">{`  ◉ ─ DOM
-  │ ╰ click
-  ╰── eval`}</pre>
-            <h3>Agents can see</h3>
-            <p>
-              A real browser your agent can read, click, and interact with.
-            </p>
-          </div>
-
-          <div className="bento-card">
-            <pre className="card-ascii" aria-hidden="true">{`  ~/proj-a/
-  ~/proj-b/
-  ~/proj-c/`}</pre>
-            <h3>Projects, not configs</h3>
-            <p>
-              Each project gets its own universe — terminal, browser, ports.
-            </p>
-          </div>
-
-          <div className="bento-card">
-            <pre className="card-ascii" aria-hidden="true">{`  $ npm run dev
-  $ pytest -x
-  $ cargo build`}</pre>
-            <h3>Terminal built in</h3>
-            <p>
-              Full terminals your agent can drive. No alt-tabbing required.
-            </p>
-          </div>
-
-          <div className="bento-card">
-            <pre className="card-ascii" aria-hidden="true">{`  ┌ tool.read
-  ├ tool.click
-  └ tool.eval`}</pre>
-            <h3>MCP tools included</h3>
-            <p>
-              DOM reads, clicks, JS eval — real browser superpowers from the jump.
-            </p>
-          </div>
-
-          <div className="bento-card bento-wide">
-            <pre className="card-ascii" aria-hidden="true">{`  ┌────────────────────────┐
-  │ editor │ browser │ term│
-  └────────────────────────┘`}</pre>
-            <h3>One window to rule them all</h3>
-            <p>
-              Browser, editor, terminal, file tree — everything in one spot.
-            </p>
-          </div>
-        </div>
+        <AppMockup />
       </section>
 
-      <footer>© 2025 Weekend Software</footer>
+      <footer>© 2026 ISPO Labs Inc</footer>
     </>
   );
 }
