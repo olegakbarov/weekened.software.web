@@ -1,7 +1,10 @@
 # Runtime Configuration
 
 Read `./weekend.config.json` before launching any runtime command.
-Use `runtime.host` and `runtime.port` from that file as the runtime endpoint.
+Resolve the runtime endpoint from that file:
+- Always use `runtime.url` from `runtime.mode: "portless"`.
+Weekend may provide a bundled `portless` runtime during Play for `dev-server` processes.
+Do not assume every process is automatically wrapped.
 Use backend commands (or browser controls) to update `weekend.config.json`.
 
 # Shared Assets

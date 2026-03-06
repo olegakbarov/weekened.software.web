@@ -5,11 +5,11 @@ import { useState, useRef, useEffect } from "react";
 const DOWNLOADS = [
   {
     label: "Apple Silicon",
-    url: "https://github.com/olegakbarov/weekend.software/releases/download/untagged-e800cf0ce226df94da4c/Weekend.Software_0.1.0_aarch64.dmg",
+    url: "https://github.com/olegakbarov/weekend.software/releases/download/v0.2.0/Weekend.Software_0.2.0_aarch64.dmg",
   },
   {
     label: "Intel",
-    url: "https://github.com/olegakbarov/weekend.software/releases/download/untagged-e800cf0ce226df94da4c/Weekend.Software_0.1.0_x64.dmg",
+    url: "https://github.com/olegakbarov/weekend.software/releases/download/v0.2.0/Weekend.Software_0.2.0_x64.dmg",
   },
 ];
 

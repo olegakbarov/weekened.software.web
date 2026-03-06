@@ -1,0 +1,24 @@
+{
+  "runtime": {
+    "host": "127.0.0.1",
+    "port": 8744,
+    "mode": "direct"
+  },
+  "startup": {
+    "commands": [
+      "claude",
+      "pnpm dev"
+    ]
+  },
+  "processes": {
+    "dev": {
+      "command": "pnpm dev",
+      "role": "dev-server"
+    },
+    "agent": {
+      "command": "claude",
+      "role": "agent"
+    }
+  },
+  "archived": false
+}
